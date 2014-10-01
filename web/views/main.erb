@@ -1,24 +1,32 @@
-<h1>MAIN PAGE</h1>
+<h1>Welcome <%=username%></h1>
 <h2>Choose your opponent</h2>
 <ul>
-	<%other_users.each do |u| %>
-		<li><button class="challenge"><%=u.username%></button></li>
+	<%other_users.each do |u| %>	
+		<li><button class="challenge" value="<%=u.username%>"><%=u.username%></button></li>
+	<%end%>
+</ul>
+
+<h2>Matches</h2>
+<ul> 
+	<%user_matches.each do |m| %>
+		<li><%=m.user1%> vs <%=m.user2%></li>
+		<li>Winner: <%=m.winner%></li>
 	<%end%>
 </ul>
 
 <script>
 
-$('challenge').on('click', function() {
-	var myJSON = {}
+$('.challenge').on('click', function() {
+	var myJSON = {};
+	myJSON.user = "<%=username%>";
+	var clickedPlayer = $(this).val();
+	myJSON['opponent'] = clickedPlayer;
 		$.ajax({
 			url: '/create_match',
 			dataType: 'json',
 			type: 'POST',
-			data: myJSON,
-			success: function(){
-				console.log("Great job! Ajax success")
-			}
-	}
+			data: myJSON
+	})
 				
 })
 

@@ -32,22 +32,33 @@ class RPS::Server < Sinatra::Application
     username = params['username']
     #need to do pw digest stuff
     password_digest = params['password']
-
     user = RPS::User.find_by(password_digest: password_digest)
-    
+
     if (user != nil)
       valid = true
     end
 
     if (valid == true)
-      other_users = RPS::User.where("password_digest != ?", password_digest)
+      
+      user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
+      other_users = RPS::User.where("username != ?", username)
       #open_matches
-      erb :main, :locals => {other_users: other_users} 
+      erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches } 
       
     else
       redirect to '/'
     end
+    
+  end
 
+  post '/create_match' do
+    user = RPS::User.find_by(username: params['user'])
+    username = user.username
+    other_users = RPS::User.where("username != ?", username)
+    opponent = RPS::User.find_by(username: params['opponent'])
+    match = RPS::Match.create(user1: user.id, user2: opponent.id)
+    user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
+    erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches }
   end
 
   run! if __FILE__ == $0
