@@ -1,0 +1,27 @@
+<h1>MAIN PAGE</h1>
+<h2>Choose your opponent</h2>
+<ul>
+	<%other_users.each do |u| %>
+		<li><button class="challenge"><%=u.username%></button></li>
+	<%end%>
+</ul>
+
+<script>
+
+$('challenge').on('click', function() {
+	var myJSON = {}
+		$.ajax({
+			url: '/create_match',
+			dataType: 'json',
+			type: 'POST',
+			data: myJSON,
+			success: function(){
+				console.log("Great job! Ajax success")
+			}
+	}
+				
+})
+
+
+
+</script>
