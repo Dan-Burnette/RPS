@@ -2,6 +2,7 @@ require_relative '../lib/rps.rb'
 require_relative '../config/environments.rb'
 
 require 'active_record'
+require 'json'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'pry-byebug'
@@ -48,17 +49,17 @@ class RPS::Server < Sinatra::Application
     else
       redirect to '/'
     end
-    
+
   end
 
   post '/create_match' do
+    #Send the match back to the AJAX success function and append it
     user = RPS::User.find_by(username: params['user'])
     username = user.username
-    other_users = RPS::User.where("username != ?", username)
     opponent = RPS::User.find_by(username: params['opponent'])
     match = RPS::Match.create(user1: user.id, user2: opponent.id)
-    user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
-    erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches }
+
+    json = {id: match.id.to_s, user1: username, user2: opponent.username}.to_json
   end
 
   run! if __FILE__ == $0

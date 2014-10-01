@@ -82,6 +82,7 @@ PLATFORMS
 DEPENDENCIES
   active_record_tasks
   activerecord
+  json
   pg
   pry-byebug
   rack-flash3
