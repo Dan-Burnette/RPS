@@ -28,7 +28,6 @@ class RPS::Server < Sinatra::Application
   end
 
   post '/login_info' do
-    #true for now, until I implement sessions, default should be false
     valid = false
     username = params['username']
     #need to do pw digest stuff
@@ -40,18 +39,37 @@ class RPS::Server < Sinatra::Application
     end
 
     if (valid == true)
-      
-      user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
-      other_users = RPS::User.where("username != ?", username)
-      my_moves = 
-      enemy_moves =
-      erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches } 
-      
+      query = params.map{|k,v| "#{k}=#{v}"}.join("&") 
+      puts query
+      redirect to("/main?#{query}")
     else
       redirect to '/'
     end
-
+# 
   end
+
+  get '/main' do
+    username = params['username']
+    #need to do pw digest stuff
+    password_digest = params['password']
+    user = RPS::User.find_by(password_digest: password_digest)
+
+    if (user != nil)
+      valid = true
+    end
+
+  if (valid == true)
+      user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
+      match_moves = RPS::Match.
+      other_users = RPS::User.where("username != ?", username)
+     
+      erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches }
+    else
+      redirect to '/'
+    end
+  
+  end
+
 
   post '/create_match' do
     #Send the match back to the AJAX success function and append it
