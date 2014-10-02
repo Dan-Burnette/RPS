@@ -80,7 +80,11 @@ class RPS::Server < Sinatra::Application
       other_users = RPS::User.where("username != ?", username)
       puts my_moves
       puts enemy_moves
-      erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches }
+      erb :main, :locals => {username: username,
+                            other_users: other_users,
+                            user_matches: user_matches,
+                            my_moves: my_moves,
+                            enemy_moves: enemy_moves }
     else
       redirect to '/'
     end
