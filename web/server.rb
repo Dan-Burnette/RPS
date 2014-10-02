@@ -43,7 +43,8 @@ class RPS::Server < Sinatra::Application
       
       user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
       other_users = RPS::User.where("username != ?", username)
-      #open_matches
+      my_moves = 
+      enemy_moves =
       erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches } 
       
     else
@@ -58,8 +59,27 @@ class RPS::Server < Sinatra::Application
     username = user.username
     opponent = RPS::User.find_by(username: params['opponent'])
     match = RPS::Match.create(user1: user.id, user2: opponent.id)
-
     json = {id: match.id.to_s, user1: username, user2: opponent.username}.to_json
+  end
+
+  post '/save_move' do
+    username = params['username']
+    move = params['move']
+    match_id = params['matchid']
+
+    #Find the match to update the move
+    match = RPS::Match.find_by(id: match_id)\
+
+    #Find the id of the user
+    user_id = (RPS::User.find_by(username: username)).id
+    #Find out which user is the one making the move and save it
+    if (match.user1 == user_id)
+      match.move1 = move
+      match.save
+    elsif (match.user2 == user_id)
+      match.move2 = move
+      match.save
+    end
   end
 
   run! if __FILE__ == $0

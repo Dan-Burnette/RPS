@@ -6,11 +6,16 @@
 	<%end%>
 </ul>
 
-<h2>Matches</h2>
+<h2>My Matches</h2>
 <ul class="matches-list"> 
 	<%user_matches.each do |m| %>
-		<li><%=RPS::User.find_by(id: m.user1).username%> vs <%=RPS::User.find_by(id: m.user2).username%></li>
-		<li>Winner: <%=m.winner%></li>
+		<div class="match" data-ref="<%=m.id%>"><%=RPS::User.find_by(id: m.user1).username%> vs <%=RPS::User.find_by(id: m.user2).username%></div>
+		<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		<button class="my-move" value="Rock">Rock</button><button class="my-move" value="Paper">Paper</button><button class="my-move" value="Scissors">Scissors</button> 
+		</div>
+		<div>Enemy Move:
+		<button class="enemy-move" value="Rock" disabled>Rock</button><button class="enemy-move" value="Paper"disabled>Paper</button><button class="enemy-move" value="Scissors" disabled>Scissors</button> </div>
+		<div>Winner: <%=m.winner%></div>
 	<%end%>
 </ul>
 
@@ -28,13 +33,19 @@ $('.challenge').on('click', function() {
 			type: 'POST',
 			data: myJSON,
 			success: function(match) {
+				console.log(match);
 				var user1 = match.user1;
 				var user2 = match.user2;
-				var html1  = '<li>' + user1 + ' vs ' + user2 + '</li>';
-				var html2 = '<li> Winner:</li>';
-				console.log(match);
+				var m_id = match.id;
+				var html1  = '<div class="match" data-ref=' + m_id + '>' + user1 + ' vs ' + user2 + '</div>';
+				var html2 = '<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<button class="my-move" value="Rock">Rock</button><button class="my-move" value="Paper">Paper</button><button class="my-move" value="Scissors">Scissors</button> </div>';
+				var html3 = '<div>Enemy Move:<button class="enemy-move" value="Rock" disabled>Rock</button><button class="enemy-move" value="Paper" disabled>Paper</button><button class="enemy-move" value="Scissors" disabled>Scissors</button> </div>';
+				var html4 = '<div> Winner:</div>';
 				$('.matches-list').append(html1);
 				$('.matches-list').append(html2);
+				$('.matches-list').append(html3);
+				$('.matches-list').append(html4);
+				 location.location.href="/";
 			},
 		    error: function(){
 	          alert("something went wrong");
@@ -42,6 +53,28 @@ $('.challenge').on('click', function() {
 		})			
 })
 
+//When you choose a move, disabled the other move buttons
+$('.my-move').on('click', function() {
+	var $buttons = $(this).parent().children();
+	$(this).css('background-color', 'green');
+	$buttons.each(function(){
+		if ($(this).css('background-color') != "rgb(0, 128, 0)") {
+			$(this).attr('disabled', 'true');
+		}
+	})
+
+		//Send your move choice off to the database
+		var myJSON = {};
+		myJSON['username'] = '<%=username%>' ;
+		myJSON['matchid'] = $('.match').data('ref'); 
+		myJSON['move'] = $(this).val();
+		$.ajax({
+			url: '/save_move',
+			dataType: 'json',
+			type: 'POST',
+			data: myJSON
+		})	
+})
 
 
 
