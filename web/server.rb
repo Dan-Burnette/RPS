@@ -78,8 +78,8 @@ class RPS::Server < Sinatra::Application
       end
 
       other_users = RPS::User.where("username != ?", username)
-      puts my_moves
-      puts enemy_moves
+      puts my_moves.inspect
+      puts enemy_moves.inspect
       erb :main, :locals => {username: username,
                             other_users: other_users,
                             user_matches: user_matches,
@@ -107,7 +107,7 @@ class RPS::Server < Sinatra::Application
     match_id = params['matchid']
 
     #Find the match to update the move
-    match = RPS::Match.find_by(id: match_id)\
+    match = RPS::Match.find_by(id: match_id)
 
     #Find the id of the user
     user_id = (RPS::User.find_by(username: username)).id
