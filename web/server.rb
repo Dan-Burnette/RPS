@@ -60,9 +60,26 @@ class RPS::Server < Sinatra::Application
 
   if (valid == true)
       user_matches = RPS::Match.where("user1 = ? OR user2 = ?", user.id, user.id)
-      match_moves = RPS::Match.
+      my_id = (RPS::User.find_by(username: username)).id
+      my_moves = []
+      enemy_moves = []
+      user_matches.map do |m|
+        my_move = []
+        enemy_move = []
+        if (m.user1 == my_id)
+          my_move = m.move1
+          enemy_move = m.move2
+        elsif (m.user2 == my_id)
+          my_move = m.move2
+          enemy_move = m.move1
+        end
+        my_moves.push(my_move)
+        enemy_moves.push(enemy_move)
+      end
+
       other_users = RPS::User.where("username != ?", username)
-     
+      puts my_moves
+      puts enemy_moves
       erb :main, :locals => {username: username, other_users: other_users, user_matches: user_matches }
     else
       redirect to '/'
