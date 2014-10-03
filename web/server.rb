@@ -5,8 +5,10 @@ require 'active_record'
 require 'json'
 require 'sinatra'
 require 'sinatra/reloader'
+require 'sinatra/flash'
 require 'pry-byebug'
 require 'digest/sha1'
+
 
 class RPS::Server < Sinatra::Application
 
@@ -18,7 +20,7 @@ class RPS::Server < Sinatra::Application
                                :secret => 'my secret'
 
   get '/' do 
-    
+
     user_session = RPS::Session.find_by(session_id: session['RPS'])
 
     if user_session != nil
@@ -67,7 +69,7 @@ class RPS::Server < Sinatra::Application
     else
       redirect to '/'
     end
-# 
+
   end
 
   get '/main' do
