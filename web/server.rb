@@ -102,23 +102,23 @@ class RPS::Server < Sinatra::Application
   end
 
   post '/save_move' do
-    username = params['username']
-    move = params['move']
-    match_id = params['matchid']
+    # username = params['username']
+    # move = params['move']
+    # match_id = params['matchid']
 
-    #Find the match to update the move
-    match = RPS::Match.find_by(id: match_id)
+    # #Find the match to update the move
+    # match = RPS::Match.find_by(id: match_id)
 
-    #Find the id of the user
-    user_id = (RPS::User.find_by(username: username)).id
-    #Find out which user is the one making the move and save it
-    if (match.user1 == user_id)
-      match.move1 = move
-      match.save
-    elsif (match.user2 == user_id)
-      match.move2 = move
-      match.save
-    end
+    # #Find the id of the user
+    # user_id = (RPS::User.find_by(username: username)).id
+    # #Find out which user is the one making the move and save it
+    # if (match.user1 == user_id)
+    #   match.move1 = move
+    #   match.save
+    # elsif (match.user2 == user_id)
+    #   match.move2 = move
+    #   match.save
+    # end
   end
 
   run! if __FILE__ == $0

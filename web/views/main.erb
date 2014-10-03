@@ -12,7 +12,7 @@
 		<%if my_moves[i] != nil %>
 			<div class="match" data-ref="<%=m.id%>"><%=RPS::User.find_by(id: m.user1).username%> vs <%=RPS::User.find_by(id: m.user2).username%></div>
 			<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<button class="my-move" value="Rock">Rock</button><button class="my-move" value="Paper">Paper</button><button class="my-move" value="Scissors">Scissors</button> 
+			<button class="my-move" value="Rock data-ref="<%=m.id%>"">Rock</button><button class="my-move" value="Paper" data-ref="<%=m.id%>">Paper</button><button class="my-move" value="Scissors data-ref="<%=m.id%>"">Scissors</button> 
 			</div>
 			<!-- script for making the appropriate move green -->
 			<script>
@@ -33,16 +33,16 @@
 		<%else %>
 			<div class="match" data-ref="<%=m.id%>"><%=RPS::User.find_by(id: m.user1).username%> vs <%=RPS::User.find_by(id: m.user2).username%></div>
 			<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<button class="my-move" value="Rock">Rock</button><button class="my-move" value="Paper">Paper</button><button class="my-move" value="Scissors">Scissors</button> 
+			<button class="my-move" value="Rock" data-ref="<%=m.id%>">Rock</button><button class="my-move" value="Paper" data-ref="<%=m.id%>">Paper</button><button class="my-move" value="Scissors" data-ref="<%=m.id%>">Scissors</button> 
 			</div>
 		<%end%>
 		<%if enemy_moves[i] != nil%>
 			<div>Enemy Move:
-			<button class="enemy-move" value="Rock" disabled>Rock</button><button class="enemy-move" value="Paper"disabled>Paper</button><button class="enemy-move" value="Scissors" disabled>Scissors</button> </div>
+			<button class="enemy-move" value="Rock" data-ref="<%=m.id%>" disabled>Rock</button><button class="enemy-move" value="Paper" data-ref="<%=m.id%>"disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref="<%=m.id%>" disabled>Scissors</button> </div>
 			<div>Winner: <%=m.winner%></div>
 		<%else%>
 			<div>Enemy Move:
-			<button class="enemy-move" value="Rock" disabled>Rock</button><button class="enemy-move" value="Paper"disabled>Paper</button><button class="enemy-move" value="Scissors" disabled>Scissors</button> </div>
+			<button class="enemy-move" value="Rock" data-ref="<%=m.id%>" disabled>Rock</button><button class="enemy-move" value="Paper" data-ref="<%=m.id%>" disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref="<%=m.id%>" disabled>Scissors</button> </div>
 			<div>Winner: <%=m.winner%></div>
 		<%end%>
 
@@ -68,8 +68,8 @@ $('.challenge').on('click', function() {
 				var user2 = match.user2;
 				var m_id = match.id;
 				var html1  = '<div class="match" data-ref=' + m_id + '>' + user1 + ' vs ' + user2 + '</div>';
-				var html2 = '<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<button class="my-move" value="Rock">Rock</button><button class="my-move" value="Paper">Paper</button><button class="my-move" value="Scissors">Scissors</button> </div>';
-				var html3 = '<div>Enemy Move:<button class="enemy-move" value="Rock" disabled>Rock</button><button class="enemy-move" value="Paper" disabled>Paper</button><button class="enemy-move" value="Scissors" disabled>Scissors</button> </div>';
+				var html2 = '<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<button class="my-move" value="Rock" data-ref=""' + m_id + '>Rock</button><button class="my-move" value="Paper" data-ref=""' + m_id + '>Paper</button><button class="my-move" value="Scissors data-ref=""' + m_id +'>Scissors</button> </div>';
+				var html3 = '<div>Enemy Move:<button class="enemy-move" value="Rock data-ref=""' + m_id + ' disabled>Rock</button><button class="enemy-move" value="Paper data-ref=""' + m_id + '" disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref=""' + m_id + ' disabled>Scissors</button> </div>';
 				var html4 = '<div> Winner:</div>';
 				$('.matches-list').append(html1);
 				$('.matches-list').append(html2);
@@ -96,7 +96,9 @@ $('.my-move').on('click', function() {
 		//Send your move choice off to the database
 		var myJSON = {};
 		myJSON['username'] = '<%=username%>' ;
-		myJSON['matchid'] = $('.match').data('ref'); 
+		myJSON['matchid'] = $(this).data('ref'); 
+		console.log(myJSON['username']);
+		var a = $(this).data('ref');
 		myJSON['move'] = $(this).val();
 		$.ajax({
 			url: '/save_move',
