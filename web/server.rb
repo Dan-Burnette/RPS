@@ -9,8 +9,6 @@ require 'pry-byebug'
 
 class RPS::Server < Sinatra::Application
 
-  beats = {rock: "scissors", paper: "rock", scissors: "paper"}
-
   get '/' do 
     erb :login
   end
@@ -117,6 +115,29 @@ class RPS::Server < Sinatra::Application
       match.move2 = move
       match.save
     end
+
+#fix this logic
+   beats = {
+   'Scissors' => 'Rock',
+   'Paper' => 'Scissors',
+   'Rock' => 'Paper' }
+          
+    #If moves are played, find the winner and set it
+    if (match.move1 != nil && match.move2 != nil) 
+      puts match.move1
+      puts match.move2
+      if match.move1 == beats[match.move2]
+       puts "#{match.move1} beats #{match.move2}"
+       match.winner = match.user1
+      elsif match.move2 == beats[match.move1]
+       puts "#{match.move2} beats #{match.move1}"
+       match.winner = match.user2
+      else
+       match.winner = 0;
+      end     
+      match.save
+    end 
+  
   end
 
   run! if __FILE__ == $0

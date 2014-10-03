@@ -98,7 +98,8 @@ $('.challenge').on('click', function() {
 		})			
 })
 
-//When you choose a move, disabled the other move buttons
+//When you choose a move, do various things:
+// 1) make it green and disable other choices
 $('.my-move').on('click', function() {
 	var $buttons = $(this).parent().children();
 	$(this).css('background-color', 'green');
@@ -108,7 +109,7 @@ $('.my-move').on('click', function() {
 		}
 	})
 
-		//Send your move choice off to the database
+		// 2) Send your move choice off to the database
 		var myJSON = {};
 		myJSON['username'] = '<%=username%>' ;
 		myJSON['matchid'] = $(this).data('ref'); 
@@ -121,6 +122,8 @@ $('.my-move').on('click', function() {
 			type: 'POST',
 			data: myJSON
 		})	
+
+		
 
 })
 
