@@ -39,7 +39,10 @@
 		<%if enemy_moves[i] != nil%>
 			<div>Enemy Move:
 			<button class="enemy-move" value="Rock" data-ref="<%=m.id%>" disabled>Rock</button><button class="enemy-move" value="Paper" data-ref="<%=m.id%>"disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref="<%=m.id%>" disabled>Scissors</button> </div>
-			<div>Winner: <%=m.winner%></div>
+			<div>Winner: 
+			<%if (RPS::User.find_by(id: m.winner)) != nil%>
+				<%=(RPS::User.find_by(id: m.winner)).username%></div>
+			<%end%></div>
 
 			<!-- script for making the appropriate move green -->
 			<script>
@@ -60,7 +63,10 @@
 		<%else%>
 			<div>Enemy Move:
 			<button class="enemy-move" value="Rock" data-ref="<%=m.id%>" disabled>Rock</button><button class="enemy-move" value="Paper" data-ref="<%=m.id%>" disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref="<%=m.id%>" disabled>Scissors</button> </div>
-			<div>Winner: <%=m.winner%></div>
+			<div>Winner: 
+			<%if (RPS::User.find_by(id: m.winner)) != nil%>
+				<%=(RPS::User.find_by(id: m.winner)).username%></div>
+			<%end%>
 		<%end%>
 	<%end%>
 </ul>

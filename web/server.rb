@@ -6,6 +6,7 @@ require 'json'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'pry-byebug'
+require 'digest/sha1'
 
 class RPS::Server < Sinatra::Application
 
@@ -19,8 +20,7 @@ class RPS::Server < Sinatra::Application
 
   post '/signup_info' do
     username = params['username']
-    #need to do pw digest stuff
-    password_digest = params['password']
+    password_digest = Digest::SHA1.hexdigest(params['password'])
     new_user = RPS::User.create(username: username, password_digest: password_digest)
     redirect to '/'
   end
@@ -29,7 +29,7 @@ class RPS::Server < Sinatra::Application
     valid = false
     username = params['username']
     #need to do pw digest stuff
-    password_digest = params['password']
+    password_digest = Digest::SHA1.hexdigest(params['password'])
     user = RPS::User.find_by(password_digest: password_digest)
 
     if (user != nil)
@@ -49,7 +49,7 @@ class RPS::Server < Sinatra::Application
   get '/main' do
     username = params['username']
     #need to do pw digest stuff
-    password_digest = params['password']
+    password_digest = Digest::SHA1.hexdigest(params['password'])
     user = RPS::User.find_by(password_digest: password_digest)
 
     if (user != nil)
@@ -127,10 +127,8 @@ class RPS::Server < Sinatra::Application
       puts match.move1
       puts match.move2
       if match.move1 == beats[match.move2]
-       puts "#{match.move1} beats #{match.move2}"
        match.winner = match.user1
       elsif match.move2 == beats[match.move1]
-       puts "#{match.move2} beats #{match.move1}"
        match.winner = match.user2
       else
        match.winner = 0;
