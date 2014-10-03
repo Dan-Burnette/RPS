@@ -19,7 +19,6 @@
 			<script>
 				var $myMoves = $(".match[data-ref='<%=m.id%>']").next().children('.my-move');
 				$myMoves.each(function() {
-					console.log($(this));
 					//Be green
 					if ($(this).val() == '<%=my_moves[i]%>') {
 						$(this).css('background-color', 'green');
@@ -44,11 +43,11 @@
 
 			<!-- script for making the appropriate move green -->
 			<script>
-				var $enemyMoves = $(".match[data-ref='93']").next().next().next().children('.enemy-move');
+				var $enemyMoves = $(".match[data-ref='<%=m.id%>']").next().next().next().children('.enemy-move');
 				$enemyMoves.each(function() {
 					console.log($(this));
 					//Be green
-					if ($(this).val() == <%=enemy_moves[i]%>) {
+					if ($(this).val() == '<%=enemy_moves[i]%>') {
 						$(this).css('background-color', 'green');
 
 					}
