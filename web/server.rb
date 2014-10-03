@@ -10,8 +10,26 @@ require 'digest/sha1'
 
 class RPS::Server < Sinatra::Application
 
+  
+  configure do
+    use Rack::Session::Cookie, :key => 'rack.session',
+                               :path => '/',
+                               :expire_after => 31_536_000, # a year in seconds
+                               :secret => 'my secret'
+
   get '/' do 
-    erb :login
+    
+    user_session = RPS::Session.find_by(session_id: session['RPS'])
+
+    if user_session != nil
+      user = user_session.user
+      new_params = {}
+      new_params['username'] = user.username
+      query = new_params.map{|k,v| "#{k}=#{v}"}.join("&") 
+      erb redirect to ("/main?#{query}")
+    else
+      erb :login
+    end
   end
 
   get '/sign_up' do
@@ -27,9 +45,10 @@ class RPS::Server < Sinatra::Application
 
   post '/login_info' do
     valid = false
+    new_params = {}
     username = params['username']
-    #need to do pw digest stuff
     password_digest = Digest::SHA1.hexdigest(params['password'])
+    new_params['username'] = username
     user = RPS::User.find_by(password_digest: password_digest)
 
     if (user != nil)
@@ -37,7 +56,12 @@ class RPS::Server < Sinatra::Application
     end
 
     if (valid == true)
-      query = params.map{|k,v| "#{k}=#{v}"}.join("&") 
+      user_session = user.sessions.new
+      user_session.generate_id
+      user_session.save
+      session['RPS'] = user_session.session_id
+
+      query = new_params.map{|k,v| "#{k}=#{v}"}.join("&") 
       puts query
       redirect to("/main?#{query}")
     else
@@ -48,9 +72,7 @@ class RPS::Server < Sinatra::Application
 
   get '/main' do
     username = params['username']
-    #need to do pw digest stuff
-    password_digest = Digest::SHA1.hexdigest(params['password'])
-    user = RPS::User.find_by(password_digest: password_digest)
+    user = RPS::User.find_by(username: username)
 
     if (user != nil)
       valid = true
@@ -87,6 +109,8 @@ class RPS::Server < Sinatra::Application
   
   end
 
+end
+
 
   post '/create_match' do
     #Send the match back to the AJAX success function and append it
@@ -116,7 +140,7 @@ class RPS::Server < Sinatra::Application
       match.save
     end
 
-#fix this logic
+
    beats = {
    'Scissors' => 'Rock',
    'Paper' => 'Scissors',
