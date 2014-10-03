@@ -12,17 +12,18 @@
 		<%if my_moves[i] != nil %>
 			<div class="match" data-ref="<%=m.id%>"><%=RPS::User.find_by(id: m.user1).username%> vs <%=RPS::User.find_by(id: m.user2).username%></div>
 			<div>My Move:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			<button class="my-move" value="Rock data-ref="<%=m.id%>"">Rock</button><button class="my-move" value="Paper" data-ref="<%=m.id%>">Paper</button><button class="my-move" value="Scissors data-ref="<%=m.id%>"">Scissors</button> 
+			<button class="my-move" value="Rock" data-ref="<%=m.id%>"">Rock</button><button class="my-move" value="Paper" data-ref="<%=m.id%>">Paper</button><button class="my-move" value="Scissors" data-ref="<%=m.id%>"">Scissors</button> 
 			</div>
+
 			<!-- script for making the appropriate move green -->
 			<script>
-				var $my_move = $(".match[data-ref='<%=m.id%>']").next().children();
-				console.log($my_move);
-				$my_move.each(function() {
+				var $myMoves = $(".match[data-ref='<%=m.id%>']").next().children('.my-move');
+				$myMoves.each(function() {
+					console.log($(this));
 					//Be green
 					if ($(this).val() == '<%=my_moves[i]%>') {
-						$(this).css('background-color', 'green');				
-						// $(this).trigger('click');
+						$(this).css('background-color', 'green');
+							
 					}
 					//disable it
 					else {
@@ -40,14 +41,31 @@
 			<div>Enemy Move:
 			<button class="enemy-move" value="Rock" data-ref="<%=m.id%>" disabled>Rock</button><button class="enemy-move" value="Paper" data-ref="<%=m.id%>"disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref="<%=m.id%>" disabled>Scissors</button> </div>
 			<div>Winner: <%=m.winner%></div>
+
+			<!-- script for making the appropriate move green -->
+			<script>
+				var $enemyMoves = $(".match[data-ref='93']").next().next().next().children('.enemy-move');
+				$enemyMoves.each(function() {
+					console.log($(this));
+					//Be green
+					if ($(this).val() == <%=enemy_moves[i]%>) {
+						$(this).css('background-color', 'green');
+
+					}
+					//disable it
+					else {
+						$(this).attr('disabled', 'true');
+					}
+				})
+			</script>			
 		<%else%>
 			<div>Enemy Move:
 			<button class="enemy-move" value="Rock" data-ref="<%=m.id%>" disabled>Rock</button><button class="enemy-move" value="Paper" data-ref="<%=m.id%>" disabled>Paper</button><button class="enemy-move" value="Scissors" data-ref="<%=m.id%>" disabled>Scissors</button> </div>
 			<div>Winner: <%=m.winner%></div>
 		<%end%>
-
 	<%end%>
 </ul>
+
 
 <script>
 
@@ -57,6 +75,7 @@ $('.challenge').on('click', function() {
 	myJSON.user = "<%=username%>";
 	var clickedPlayer = $(this).val();
 	myJSON['opponent'] = clickedPlayer;
+	//create the match and update the page straight away
 		$.ajax({
 			url: '/create_match',
 			dataType: 'json',
@@ -76,10 +95,7 @@ $('.challenge').on('click', function() {
 				$('.matches-list').append(html3);
 				$('.matches-list').append(html4);
 				location.reload(true)
-			},
-		    error: function(){
-	          alert("something went wrong");
-	        }
+			}
 		})			
 })
 
@@ -108,10 +124,6 @@ $('.my-move').on('click', function() {
 		})	
 
 })
-
-
-
-
 
 
 </script>
